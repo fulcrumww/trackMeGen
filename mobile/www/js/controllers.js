@@ -65,10 +65,48 @@ angular.module('starter.controllers', [])
 .controller('AppCtrl', function($scope, $ionicModal, $timeout, $state,$rootScope) {
     })
 
-    .controller('registerCtrl', function($scope, $ionicModal, $timeout, $state,$rootScope) {
+    .controller('registerCtrl', function($config,$scope, $ionicModal, $timeout, $state,$rootScope,$http,$ionicLoading, $ionicPopup, connectServer) {
             $scope.register=function(){
             alert("register");
-            
+              /*  $ionicLoading.show({template: 'Loading...'});
+                var url= $config.serviceUrl + "/user/login";
+                //  var param={"json":{"username" : "FWIN01112", "password" : "fulcrum$1"}};
+                var param={"json":{"username" : $scope.user.username, "password" : $scope.user.password}};
+                if($scope.user.username!=null && $scope.user.password !=null){
+                    if($scope.user.remember){
+                        localStorage.setItem('username',$scope.user.username);
+                        localStorage.setItem('pwd',$scope.user.password);
+
+                    }else{
+                        localStorage.setItem('username','');
+                        localStorage.setItem('pwd','');
+                        $scope.user.remember=false;
+                    }
+                    connectServer.getResponse(url,"POST",param).success(function (data) {
+                        $ionicLoading.hide();
+                        var obj = data.data;
+                        localStorage.setItem('userId',obj.userId);
+                        localStorage.setItem('sessionId',obj.sessionId);
+                        sessionStorage.setItem('shiftTimmings',obj.shiftTimmings);
+                        sessionStorage.setItem('pickUpPoint',obj.pickUpPoint);
+                        $rootScope.count = 1;
+                        if(obj.pickUpPoint !=null  && obj.pickUpPoint !=""){
+                            $state.go('app.dashboard');
+                        }
+                        else{
+                            $state.go('app.profile');
+                        }
+                    }).error(function (data) {
+                        $rootScope.showAlert(JSON.stringify(data));
+                        $ionicLoading.hide();
+                    });
+
+                }else{
+                    $ionicLoading.hide();
+                    $rootScope.showAlert('Please enter username/ password');
+                }*/
+
+
             }
             
     })
