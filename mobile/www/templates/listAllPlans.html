@@ -1,0 +1,20 @@
+
+<ion-view title="All Travel Plans">
+    <ion-nav-buttons side="left">
+        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
+
+    <ion-content >
+        <ul class="list" >
+            <li class="item item-text-wrap" ng-repeat=" plan in allTravelPlans" >
+                 <div class=""  data-ng-attr-id="{{plan.travelPlanId}}" style="width: 100%;" ng-click="showPlanDetails(plan.travelPlanId)"><h2>{{plan.startingPoint}} - {{plan.endPoint }} </h2><p>{{plan.scheduleStartTime}}</p> </div>
+               
+               
+            </li>
+        </ul>
+        
+    </ion-content>
+</ion-view>
+
+
+

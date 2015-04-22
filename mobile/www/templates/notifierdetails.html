@@ -1,0 +1,27 @@
+<ion-view title="Contacts">
+    <ion-nav-buttons side="left">
+        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
+    <h1 class="title"></h1>
+   <!--  <ion-nav-buttons side="right">
+       <button class="" ng-click=""></button>
+    </ion-nav-buttons>-->
+    <ion-content>
+        <div class="content">            
+            <div class="list">
+                    <a class="item item-icon-right" ng-repeat="contact in data">
+                       <!-- <i class="icon ion-trash-a" ></i>-->
+                        <h2>{{contact.fullName}}</h2>
+                        <p> {{contact.mobile}}</p>
+                    </a>
+                </div>
+            <div class="padding" ng-if="data.length > 0">
+                 <!--   <button class="button button-block button-positive" ng-click="">Save</button> -->
+                </div>
+            <div class="padding">
+                <button class="button button-block  button-positive" style="border-radius:15px;"  ng-click="showTravelPlan()"> Save Contacts</button>
+            </div>
+
+        </div>
+    </ion-content>
+</ion-view>

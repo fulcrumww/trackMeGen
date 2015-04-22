@@ -1,0 +1,22 @@
+<ion-view title="Contacts" >
+    <ion-nav-buttons side="left">
+        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
+    <h1 class="title">Contacts</h1>
+   <!--This Data will come from server after comparing the contacts (one contact has only one number )but before that you have to send all contacts (one contact can have multiple phone numbers) to server-->
+    <ion-content>
+        <div class="content">
+            <div class="list">
+                <ion-checkbox ng-repeat="contact in list.data"  ng-model="contact.checked"  ng-checked="contact.checked"  ng-click="toggleSelection(contact.userId, contact.fullName, contact.mobile,contact.checked)" />
+                          <h2>{{contact.fullName}}</h2>
+                          <p> {{contact.mobile}}</p>
+                </ion-checkbox>
+             </div>
+           
+        <div class="padding" >
+            <button class="button button-block button-positive" ng-click="saveContacts();">Save</button>
+        </div>
+      
+     </div>
+    </ion-content>
+</ion-view>
