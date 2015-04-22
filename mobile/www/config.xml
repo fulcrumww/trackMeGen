@@ -67,6 +67,7 @@
       <param name="ios-package" value="CDVStatusBar" onload="true" />
     </feature>
     <!-- iPhone and iPod touch -->
+    <gap:plugin name="hu.dpal.phonegap.plugins.uniquedeviceid" />
     <gap:splash src="iOS_Resources/splash/Default~iphone.png" gap:platform="ios" width="320" height="480" />
     <gap:splash src="iOS_Resources/splash/Default@2x~iphone.png" gap:platform="ios" width="640" height="960" />
 

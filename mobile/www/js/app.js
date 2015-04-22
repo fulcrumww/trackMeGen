@@ -1,13 +1,36 @@
 
-angular.module('starter', ['ionic', 'starter.controllers'])
+angular.module('starter', ['ionic',  'ngCordova', 'starter.controllers' ])
 
-.run(function($ionicPlatform, $window, $rootScope,$n, $state) {
+.run(function($ionicPlatform, $window, $rootScope,$n, $state,$q,$timeout,ContactService) {
         document.addEventListener("offline", $n.onOffline, false);
         document.addEventListener("online", $n.onOnline, false);
 
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
+                       
+                       $rootScope.data = {
+                       contacts : []
+                       };
+                        $rootScope.users= {"json": {"mobiles":[]}};
+                       
+                       ContactService.find().then(function (contacts) {
+                          $rootScope.data.contacts = contacts;
+                          for(var i=0;i<$rootScope.data.contacts.length; i++){
+                          for(var j=0;j<$rootScope.data.contacts[i].phoneNumbers.length;j++){
+                           // taking out only mobile numbers from contact selected
+                                                  
+                           $rootScope.users.json.mobiles.push($rootScope.data.contacts[i].phoneNumbers[j].value.replace(/[^\d\+]/g,""));
+                           }
+                           }
+                                                 
+                          /*  $timeout(function(){
+                                alert("contacts only : "+$rootScope.users);
+                            },1000);
+                           */
+                          }, function (error) {
+                          //console.log('here in error: '+error);
+                          });
       navigator.splashscreen.hide();
     if(window.cordova && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(false);
@@ -16,7 +39,8 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
-    window.plugin.backgroundMode.enable();
+  //  window.plugin.backgroundMode.enable();
+                      
 
   });
         $ionicPlatform.registerBackButtonAction(function () {
@@ -70,10 +94,19 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       templateUrl: "templates/menu.html",
       controller: 'AppCtrl'
     })
-    
-   
-    .state('app.register', {
+        .state('app.dashboard', {
+               url: "/dashboard",
+               views: {
+               'menuContent' :{
+               templateUrl: "templates/dashboard.html",
+               controller: 'dashboardCtrl'
+               }
+               }
+               })
+        
+        .state('app.register', {
              url: "/register",
+             cache: false,
              views: {
             'menuContent' :{
              templateUrl: "templates/register.html",
@@ -82,8 +115,43 @@ angular.module('starter', ['ionic', 'starter.controllers'])
             }
     })
         
-   /* .state('app.profile', {
+        .state('app.travel-plan', {
+               url: "/travel-plan",
+               cache: false,
+               views: {
+               'menuContent' :{
+               templateUrl: "templates/Travel-plan.html",
+               controller: 'Travel_PlanCtrl'
+               
+                             }
+               
+                 },
+                params:{'updatePlan': null}
+        })
+        .state('app.notifierdetails', {
+               url: "/notifierdetails",
+               cache: false,
+               views: {
+               'menuContent' :{
+               templateUrl: "templates/notifierdetails.html",
+               controller: 'notifierDetailsCtrl'
+               }
+               }
+               })
+        .state('app.contacts', {
+               url: "/contacts",
+               cache: false,
+               views: {
+               'menuContent' :{
+               templateUrl: "templates/contacts.html",
+               controller: 'contactsCtrl'
+               }
+               }
+               })
+        
+    .state('app.profile', {
         url: "/profile",
+        cache: false,
         views: {
         'menuContent' :{
         templateUrl: "templates/profile.html",
@@ -91,34 +159,27 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         }
       }
     })
-    .state('app.dashboard', {
-        url: "/dashboard",
+   
+ 
+    .state('app.allTravelPlans', {
+        url: "/allTravelPlans",
         views: {
         'menuContent' :{
-        templateUrl: "templates/dashboard.html",
-        controller: 'dashboardCtrl'
+        templateUrl: "templates/listAllPlans.html",
+        controller: 'allTravelPlansCtrl'
         }
       }
     })
-        
-    .state('app.currentlocation', {
-        url: "/currentlocation",
-        views: {
-        'menuContent' :{
-        templateUrl: "templates/currentlocation.html",
-        controller: 'currenLocationCtrl'
-        }
-      }
-    })
-    .state('app.emergencydetails', {
-       url: "/emergencydetails",
+     .state('app.currentlocation', {
+       url: "/currentlocation",
        views: {
        'menuContent' :{
-       templateUrl: "templates/emergencydetails.html",
-       controller: 'EmergDetailsCtrl'
+       templateUrl: "templates/currentlocation.html",
+       controller: 'currentLocationCtrl'
        }
         }
     })
+        
     .state('app.nonetwork', {
        url: "/nonetwork",
        views: {
@@ -127,10 +188,11 @@ angular.module('starter', ['ionic', 'starter.controllers'])
          controller: 'nonetworkCtrl'
         }
      }
-    })*/
-        ;
+    });
     
 // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/register');
+  $urlRouterProvider.otherwise('/app/dashboard');
 });
+
+
 

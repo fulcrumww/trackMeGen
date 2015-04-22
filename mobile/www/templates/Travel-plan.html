@@ -1,0 +1,68 @@
+<ion-view title="Travel Plan">
+
+        <ion-nav-buttons side="left">
+            <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+        </ion-nav-buttons>
+        <h1 class="title">Travel Plan</h1>
+        
+  
+    <ion-content>
+        <div class="content">
+        <div class="list">
+            <label class="item item-input item-stacked-label">
+                <span class="input-label"><strong>Starting Point</strong></span>
+                <input type="text" ng-model="user.starting_point" placeholder="Starting Point" class="item item-input"  />
+            </label>
+        
+        
+            <label class="item item-input item-stacked-label">
+                <span class="input-label"><strong>End Point</strong></span>
+                <input type="text" ng-model="user.end_point" placeholder="End Point" class="item item-input"  />
+            </label>
+        
+        
+            <label class="item item-input item-stacked-label">
+                <span class="input-label"><strong>Date</strong></span>
+                <input type="text"  ng-model="user.date" placeholder=" Date" class="item item-input" ng-click="openDatePicker()" readonly  />
+            </label>
+            
+            <label class="item item-input item-stacked-label">
+                <span class="input-label"><strong>Time</strong></span>
+                <ionic-time-picker etime="slots[1].epochTime" format="24" step="1">
+                    <standard-time-no-meridian etime='slots[1].epochTime'></standard-time-no-meridian>
+                    <input  ng-model="user.time" id="txttime" placeholder=" Time"  class="item item-input" readonly />
+                </ionic-time-picker>
+            </label>
+           
+        </div>
+        <br/>
+        <label class="item item-input item-stacked-label" ng-show="label == 'Update' && users.length>1 ">
+            <span class="input-label"><strong>Selected Users : </strong></span>
+        </label>
+        <div class="list" ng-show="label == 'Update' && users.length>1 ">
+            
+          <a class="item item-icon-right" ng-repeat="user in users" ng-if="userID !=user.userId ">
+             <i class="icon ion-trash-a" ng-click="removeContact(user);"></i>
+             <h2>{{user.fullName}}</h2>
+             <p ng-if="">{{user.mobile}}</p>
+         </a>
+
+        </div>
+        
+        
+       
+        <div class="padding">
+            <button class="button button-block  button-positive" style="border-radius:15px;"  ng-click="create_travelPlan()">{{label}}</button>
+        </div>
+        
+    </ion-content>
+</ion-view>
+
+
+
+
+
+
+
+
+
