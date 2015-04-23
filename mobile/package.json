@@ -17,10 +17,11 @@
   "cordovaPlugins": [
     "https://github.com/Paldom/UniqueDeviceID.git",
     "http://github.com/VitaliiBlagodir/cordova-plugin-datepicker",
-    "org.apache.cordova.console",
-    "org.apache.cordova.contacts",
-    "org.apache.cordova.device",
+    "https://github.com/jcesarmobile/IDFVPlugin.git",
     "org.apache.cordova.geolocation",
+    "org.apache.cordova.device",
+    "org.apache.cordova.contacts",
+    "org.apache.cordova.console",
     "org.apache.cordova.network-information"
   ]
 }

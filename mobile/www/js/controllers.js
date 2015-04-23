@@ -366,14 +366,18 @@ angular.module('starter.controllers', [])
             };
     })
 
-    .controller('registerCtrl', function($config,$scope, $ionicModal, $timeout,$n, $state,$rootScope,$http,$ionicLoading, $ionicPopup, connectServer) {
+    .controller('registerCtrl', function($config,$scope, $ionicModal, $timeout,$n, $state,$rootScope,$http,$ionicLoading, $ionicPopup, $window,connectServer) {
       $scope.user={"full_name" : null, "mobile" : null, "email" :null  };
-        $scope.deviceid = "68753A44-4D6F-1226-9C60-0050E4C00063";
-              //  $rootScope.deviceid ;
-        localStorage.setItem("deviceid","68753A44-4D6F-1226-9C60-0050E4C00067");
-        // Get UUID
-      //  window.plugins.uniqueDeviceID.get( success, fail);
-                
+        $scope.deviceid = "";
+        
+        // Get UUID using plugin https://github.com/jcesarmobile/IDFVPlugin and cordova device plugin for iOS only
+                if(device.platform == "iOS"){
+                window.IDFVPlugin.getIdentifier(function(result){  $scope.deviceid =result; localStorage.setItem("deviceid",result);},function(error){ $rootScope.showAlert(error); });
+                }else{
+                // For Android
+                   $scope.deviceid = device.uuid ;
+                   localStorage.setItem("deviceid",device.uuid);
+                }
                 $rootScope.showAlert = function(msg) {
                 var alertPopup = $ionicPopup.alert({title: 'MESSAGE',template: msg});
                 alertPopup.then(function(res) {});
@@ -387,7 +391,7 @@ angular.module('starter.controllers', [])
                 //  var param={"json":{"full_name" : "FWIN01112", "password" : "fulcrum$1"}};
               
                 param = {"json":{"full_name" : $scope.user.fullname, "mobile" : $scope.user.mobile, "email" :$scope.user.email , "device_details" :$scope.deviceid}};
-               // alert('params: '+JSON.stringify(param));
+                //alert('params: '+JSON.stringify(param));
                 if($scope.user.fullname!=null && $scope.user.mobile !=null && $scope.user.email !=null && $scope.deviceid !=null){
 
                     connectServer.getResponse(url,"POST",param).success(function (data) {
