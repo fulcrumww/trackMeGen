@@ -17,12 +17,11 @@
     <script src="lib/ngCordova/dist/ng-cordova.js"></script>
     <!-- cordova script (this will be a 404 during development) -->
     <script src="cordova.js"></script>
-    
     <!-- your app's js -->
     <script src="js/app.js"></script>
     <script src="js/services.js"></script>
 
-    
+
     <script src="js/controllers.js"></script>
 <!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>-->
   </head>
@@ -36,11 +35,12 @@
          script.type = 'text/javascript';
          script.src = 'http://maps.googleapis.com/maps/api/js?sensor=false&' +
          'callback=initialize';
-         document.body.appendChild(script);                                      
+         document.body.appendChild(script);
          function initialize(){
 
          }
-        //window.plugin.backgroundMode.enable();
+        // Used https://github.com/katzer/cordova-plugin-background-mode plugin to run app in baclkground mode
+        cordova.plugins.backgroundMode.enable();
        // navigator.splashscreen.hide();
     });
     

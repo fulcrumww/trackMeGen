@@ -1,65 +1,7 @@
 
-angular.module('starter', ['ionic',  'ngCordova', 'starter.controllers' ])
+angular.module('starter', ['ui.router', 'ionic',  'ngCordova', 'starter.controllers' ])
 
-.run(function($ionicPlatform, $window, $rootScope,$n, $state,$q,$timeout,ContactService) {
-        document.addEventListener("offline", $n.onOffline, false);
-        document.addEventListener("online", $n.onOnline, false);
 
-  $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
-                       
-                       $rootScope.data = {
-                       contacts : []
-                       };
-                        $rootScope.users= {"json": {"mobiles":[]}};
-                       
-                       ContactService.find().then(function (contacts) {
-                          $rootScope.data.contacts = contacts;
-                          for(var i=0;i<$rootScope.data.contacts.length; i++){
-                          for(var j=0;j<$rootScope.data.contacts[i].phoneNumbers.length;j++){
-                           // taking out only mobile numbers from contact selected
-                                                  
-                           $rootScope.users.json.mobiles.push($rootScope.data.contacts[i].phoneNumbers[j].value.replace(/[^\d\+]/g,""));
-                           }
-                           }
-                                                 
-                          /*  $timeout(function(){
-                                alert("contacts only : "+$rootScope.users);
-                            },1000);
-                           */
-                          }, function (error) {
-                          //console.log('here in error: '+error);
-                          });
-      navigator.splashscreen.hide();
-    if(window.cordova && window.cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(false);
-    }
-    if(window.StatusBar) {
-      // org.apache.cordova.statusbar required
-      StatusBar.styleDefault();
-    }
-  //  window.plugin.backgroundMode.enable();
-                      
-
-  });
-        $ionicPlatform.registerBackButtonAction(function () {
-          if($rootScope.page != "dashboard" && $rootScope.page != "login"){
-              $state.go('app.dashboard');
-          }else{
-           navigator.Backbutton.goHome(function() {
-                     //alert('success');
-                }, function() {
-                    // alert('fail');
-                });
-            // https://github.com/ZhichengChen/cordova-plugin-android-home plugin
-           /*    navigator.home.home(function(){
-              }, function(){
-              });*/
-          }
-        }, 100);
-  
-})
 
 .service("$n", ["$config", "$location", "$window", "$state", "$rootScope",
     function($config, $location, $window, $state, $root){
@@ -191,8 +133,79 @@ angular.module('starter', ['ionic',  'ngCordova', 'starter.controllers' ])
     });
     
 // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/dashboard');
-});
+ // $urlRouterProvider.otherwise('/app/dashboard');
+})
+
+.run(function($ionicPlatform, $window, $rootScope,$n, $state,$q,$timeout,$location, ContactService) {
+     document.addEventListener("offline", $n.onOffline, false);
+     document.addEventListener("online", $n.onOnline, false);
+     
+     $ionicPlatform.ready(function() {
+                          // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+                          // for form inputs)
+                          
+                          $rootScope.data = {contacts : [] };
+                          $rootScope.users= {"json": {"mobiles":[]}};
+                          
+                          ContactService.find().then(function (contacts) {
+                                                     $rootScope.data = {contacts : [] };
+                                                     $rootScope.users= {"json": {"mobiles":[]}};
+                                                     $rootScope.data.contacts = contacts;
+                                                     for(var i=0;i<$rootScope.data.contacts.length; i++){
+                                                     for(var j=0;j<$rootScope.data.contacts[i].phoneNumbers.length;j++){
+                                                     // taking out only mobile numbers from contact selected
+                                                     
+                                                     $rootScope.users.json.mobiles.push($rootScope.data.contacts[i].phoneNumbers[j].value.replace(/[^\d\+]/g,""));
+                                                     }
+                                                     }
+                                                     
+                                                     /*  $timeout(function(){
+                                                      alert("contacts only : "+$rootScope.users);
+                                                      },1000);
+                                                      */
+                                                     }, function (error) {
+                                                     //console.log('here in error: '+error);
+                                                     });
+                          navigator.splashscreen.hide();
+                          if(window.cordova && window.cordova.plugins.Keyboard) {
+                          cordova.plugins.Keyboard.hideKeyboardAccessoryBar(false);
+                          }
+                          if(window.StatusBar) {
+                          // org.apache.cordova.statusbar required
+                          StatusBar.styleDefault();
+                          }
+                          cordova.plugins.backgroundMode.enable();
+                          
+                          });
+     $ionicPlatform.registerBackButtonAction(function () {
+                                             if($rootScope.page != "dashboard" && $rootScope.page != "login"){
+                                             $state.go('app.dashboard');
+                                             }else{
+                                             navigator.Backbutton.goHome(function() {
+                                                                         //alert('success');
+                                                                         }, function() {
+                                                                         // alert('fail');
+                                                                         });
+                                             // https://github.com/ZhichengChen/cordova-plugin-android-home plugin
+                                             /*    navigator.home.home(function(){
+                                              }, function(){
+                                              });*/
+                                             }
+                                             }, 100);
+     var userId = null, sessionId= null;
+     userId=  localStorage.getItem('userId');
+     sessionId= localStorage.getItem('sessionId');
+     
+     if((userId == null && sessionId == null) || (userId == '' && sessionId == '') || (userId == 'undefined' && sessionId == 'undefined')){
+           // alert('6 userId: '+userId+' sessionId: '+sessionId);
+            //$state.go('app.register');
+            $location.path('/app/register');
+          }
+         else{
+           $location.path('/app/dashboard');
+         }
+     
+     });
 
 
 
