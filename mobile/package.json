@@ -22,6 +22,7 @@
     "org.apache.cordova.device",
     "org.apache.cordova.contacts",
     "org.apache.cordova.console",
-    "org.apache.cordova.network-information"
+    "org.apache.cordova.network-information",
+    "https://github.com/katzer/cordova-plugin-background-mode.git"
   ]
 }

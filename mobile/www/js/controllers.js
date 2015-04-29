@@ -41,9 +41,9 @@ angular.module('starter.controllers', [])
          find: function () {
          var deferred = $q.defer();
          var options = new ContactFindOptions();
-        // options.filter = filter;
+        // options.filter = filter; "displayName","name", "phoneNumbers"   com.fulcrum.tracking
          options.multiple = true;
-         var fields = ["displayName","name", "phoneNumbers"];
+         var fields = ["*"];
          if(navigator && navigator.contacts) {
          
          navigator.contacts.find(fields, function (contacts) {
@@ -366,22 +366,26 @@ angular.module('starter.controllers', [])
             };
     })
 
-    .controller('registerCtrl', function($config,$scope, $ionicModal, $timeout,$n, $state,$rootScope,$http,$ionicLoading, $ionicPopup, $window,connectServer) {
+    .controller('registerCtrl', function($config,$scope, $n, $ionicModal, $stateParams, $timeout, $state,$rootScope,$http,$ionicLoading, $ionicPopup, $window,connectServer) {
+                
       $scope.user={"full_name" : null, "mobile" : null, "email" :null  };
         $scope.deviceid = "";
-        
         // Get UUID using plugin https://github.com/jcesarmobile/IDFVPlugin and cordova device plugin for iOS only
-                if(device.platform == "iOS"){
+                $timeout(function(){
+                         //alert('here: '+device.platform);
+               if(device.platform == "iOS"){
                 window.IDFVPlugin.getIdentifier(function(result){  $scope.deviceid =result; localStorage.setItem("deviceid",result);},function(error){ $rootScope.showAlert(error); });
                 }else{
                 // For Android
                    $scope.deviceid = device.uuid ;
                    localStorage.setItem("deviceid",device.uuid);
                 }
+                         },2000);
                 $rootScope.showAlert = function(msg) {
                 var alertPopup = $ionicPopup.alert({title: 'MESSAGE',template: msg});
                 alertPopup.then(function(res) {});
                 };
+              
             $scope.register=function(){
                    //$state.go('app.travel-plan');
                 localStorage.setItem('userId','');
@@ -402,6 +406,7 @@ angular.module('starter.controllers', [])
                         localStorage.setItem('userId',obj.userId);
                         localStorage.setItem('sessionId',obj.sessionId);
                         console.log(" sessionId: "+obj.sessionId+" userId: "+obj.userId);
+                        $rootScope.showAlert('Registration is successfull.');
                         $state.go('app.travel-plan');
                      }).error(function (data) {
                         $ionicLoading.hide();
@@ -413,8 +418,8 @@ angular.module('starter.controllers', [])
                 }
 
 
-            }
-            
+            };
+           
     })
 
 .controller('Travel_PlanCtrl', function( $config,$scope, $n, $ionicModal, $stateParams, $timeout, $state,$rootScope,$http,$ionicLoading, $ionicPopup, $cordovaDatePicker, connectServerToGet, connectServer) {
@@ -575,8 +580,9 @@ $scope.openDatePicker=function(){
                     }
             })
 
-.controller('contactsCtrl', function($config,$n, $scope,$rootScope, $http,$state,$ionicModal,$filter,$ionicPopup,$ionicLoading,connectServer) {
-    
+.controller('contactsCtrl', function($config,$n, $scope,$state,$stateParams, $timeout, $rootScope, $http,$state,$ionicModal,$filter,$ionicPopup,$ionicLoading,connectServer) {
+   
+            
             $scope.array =  [];
             var userId= localStorage.getItem('userId');
             var sessionId= localStorage.getItem('sessionId');
@@ -584,49 +590,6 @@ $scope.openDatePicker=function(){
             $scope.array_ = angular.copy($scope.array);
             var url= $config.serviceUrl + "/api/v2/user/contacts?sessionId="+sessionId+"&userId="+userId;
             $scope.list= [];
-            /* $scope.list =   {
-            "data": [
-                     {
-                     "userId": 1,
-                     "fullName": "Saheel Sikilkar",
-                     "email": "saheel_sikilkar@fulcrumww.com",
-                     "mobile": 9860671827,
-                     "status": "inactive",
-                     "deviceDetails": null
-                     },
-                     {
-                     "userId": 2,
-                     "fullName": "Vijay Bansod",
-                     "email": "vijay_bansod@fulcrumww.com",
-                     "mobile": 8446786784,
-                     "status": "inactive",
-                     "deviceDetails":null
-                     },
-                     {
-                     "userId": 3,
-                     "fullName": "Sachin Dhope",
-                     "email": "sachin_dhope@fulcrumww.com",
-                     "mobile": 8308487530,
-                     "status": "inactive",
-                     "deviceDetails": null
-                     },
-                     {
-                     "userId": 4,
-                     "fullName": "Atul Athawale",
-                     "email": "atul_athawale@fulcrumww.com",
-                     "mobile": 9956734333,
-                     "status": "inactive",
-                     "deviceDetails":null
-                     },
-                     {
-                     "userId": 5,
-                     "fullName": "Anushree Kaple",
-                     "email": "anushree_kaple@fulcrumww.com",
-                     "mobile": 9254346544,
-                     "status": "inactive",
-                     "deviceDetails":null
-                     }
-                     ]};*/
             $scope.toggleSelection = function toggleSelection(userId,fullName,mobile,checked) {
               if(checked){
                  $scope.array.push({"userId":userId,"fullName" : fullName, "mobile" : mobile});
@@ -648,9 +611,13 @@ $scope.openDatePicker=function(){
            connectServer.getResponse(url,"POST",param).success(function (data) {
                 $ionicLoading.hide();
                 var obj = data.data;
-                 //alert("Data from server : "+JSON.stringify(obj));
+                 //alert("Data from server : "+JSON.stringify(obj)); com.fulcrum.tracking
                  $scope.list= data;
-               // $state.go('app.travel-plan');
+                 if(obj == 'No Records Found'){
+                   $rootScope.showAlert('Sorry! No one from your contacts registered with us.');
+                    $state.go('app.allTravelPlans');
+                 }
+               
                 }).error(function (data) {
                          $ionicLoading.hide();
             });
@@ -710,12 +677,10 @@ $scope.openDatePicker=function(){
             var deferred = $q.defer();
             if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position){
-                 alert('here1');
                  $scope.$apply(function(){ alert('here2');
                    geocoder = new google.maps.Geocoder();
                    var lat = position.coords.latitude;
                    var lng = position.coords.longitude;
-                   alert(lat + 'coords' + lng);
                    var latlng = new google.maps.LatLng(lat, lng);
                    geocoder.geocode({'latLng': latlng}, function(results, status)
                     {   console.log('coords' + latlng);
@@ -857,14 +822,13 @@ $scope.openDatePicker=function(){
             }
             
             })
-
-.controller('profileCtrl', function($config, $scope,$rootScope,$http,$state,$n ,$ionicModal,$filter,$ionicPopup,$ionicLoading,connectServerToGet ,connectServer) {
+.controller('profileCtrl', function( $config,$scope, $n, $ionicModal, $stateParams, $timeout, $state,$rootScope,$http,$ionicLoading, $ionicPopup,connectServerToGet ,connectServer) {
+           
             //$ionicLoading.show({template: 'Loading...'});
             $scope.user = {"name": null, "email" :null, "mobile" : null};
             var userId = null, sessionId = null;
              userId= localStorage.getItem('userId');
              sessionId= localStorage.getItem('sessionId');
-            //alert("userId: "+userId+" sessionId: "+sessionId);
             var url= $config.serviceUrl + "/api/v2/user/profile?sessionId="+sessionId+"&userId="+userId;
             var params ="";
             connectServerToGet.getResponse(url,"GET",params).success(function (data) {
@@ -889,8 +853,8 @@ $scope.openDatePicker=function(){
                  //alert(JSON.stringify( data));
                  //Get And display
                  
-                 
-                 
+                  $rootScope.showAlert('Profile updated successfully.');
+                  $state.go('app.dashboard');
                  }).error(function (data, status, headers, config) {
                           $rootScope.showAlert('status ='+ status + ' ' + headers);
                           $ionicLoading.hide();

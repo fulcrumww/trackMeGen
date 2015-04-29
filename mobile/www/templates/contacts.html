@@ -9,12 +9,12 @@
             <div class="list">
                 <ion-checkbox ng-repeat="contact in list.data"  ng-model="contact.checked"  ng-checked="contact.checked"  ng-click="toggleSelection(contact.userId, contact.fullName, contact.mobile,contact.checked)" />
                           <h2>{{contact.fullName}}</h2>
-                          <p> {{contact.mobile}}</p>
+                          <p> {{contact.mobile}} </p>
                 </ion-checkbox>
              </div>
            
-        <div class="padding" >
-            <button class="button button-block button-positive" ng-click="saveContacts();">Save</button>
+        <div class="padding" ng-if="list.data !='No Records Found'" >
+            <button class="button button-block button-positive" ng-click="saveContacts();">Add Contacts</button>
         </div>
       
      </div>
