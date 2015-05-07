@@ -343,7 +343,7 @@ angular.module('starter.controllers', [])
            })
 
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state,$rootScope) {
+.controller('AppCtrl', function($config,$scope, $n, $ionicModal, $stateParams, $timeout, $state,$rootScope,$http,$ionicLoading, $ionicPopup, $window,connectServer) {
             
            $scope.Register=function(){
              $state.go('app.register',self, { reload: true });
@@ -364,6 +364,35 @@ angular.module('starter.controllers', [])
             $scope.profile=function(){
               $state.go('app.profile',self, { reload: true });
             };
+            
+            $scope.Login = function(){
+            var url= $config.serviceUrl + "/api/v2/user/login";
+            var mobile= localStorage.getItem('mobile');
+            var email= localStorage.getItem('email');
+            param = {"json":{"mobile" : mobile, "email" :email }};
+           // alert('params: '+JSON.stringify(param));
+            if(mobile !=null && email !=null ){
+            
+            connectServer.getResponse(url,"POST",param).success(function (data) {
+                    $ionicLoading.hide();
+                    var obj = data.data;
+                    // alert("Data ::: "+JSON.stringify(obj));
+                    
+                    localStorage.setItem('userId',obj.userId);
+                    localStorage.setItem('sessionId',obj.sessionId);
+                    console.log(" sessionId: "+obj.sessionId+" userId: "+obj.userId);
+                    $rootScope.showAlert('Login is successfull.');
+                    $state.go('app.dashboard');
+                    }).error(function (data) {
+                             $ionicLoading.hide();
+                });
+            
+            }else{
+               $ionicLoading.hide();
+              // $rootScope.showAlert('');
+            }
+
+        };
     })
 
     .controller('registerCtrl', function($config,$scope, $n, $ionicModal, $stateParams, $timeout, $state,$rootScope,$http,$ionicLoading, $ionicPopup, $window,connectServer) {
@@ -390,6 +419,8 @@ angular.module('starter.controllers', [])
                    //$state.go('app.travel-plan');
                 localStorage.setItem('userId','');
                 localStorage.setItem('sessionId','');
+                localStorage.setItem('mobile',$scope.user.mobile);
+                localStorage.setItem('email',$scope.user.email);
                 //$ionicLoading.show({template: 'Loading...'});
                 var url= $config.serviceUrl + "/api/v2/user/register";
                 //  var param={"json":{"full_name" : "FWIN01112", "password" : "fulcrum$1"}};
@@ -507,6 +538,13 @@ $scope.openDatePicker=function(){
                                       }, false);
 }
             
+            $scope.isSameLocation =function(){
+               if($scope.user.starting_point === $scope.user.end_point){
+                    $rootScope.showAlert('Starting point and ending point should be different');
+                    $scope.user.end_point ='';
+            }else{
+            }
+            };
             
         $scope.create_travelPlan=function(){
             //alert($scope.label);
@@ -778,17 +816,17 @@ $scope.openDatePicker=function(){
                              var url= $config.serviceUrl + "/routes/travel-history?sessionId="+sessionId+"&userId="+userId;
                              
                              connectServer.getResponse(url,"POST",param).success(function (data) {
-                                                                                 $ionicLoading.hide();
-                                                                                 if( $rootScope.timeInterval== false){
-                                                                                 $rootScope.showAlert('Tracking started successfully');
-                                                                                 $state.go('app.currentlocation', null, {  });
-                                                                                 }else{
-                                                                                 $state.go($state.current, {}, {reload: true});
-                                                                                 }
-                                                                                 }).error(function (data, status, headers, config) {
-                                                                                          $ionicLoading.hide();
-                                                                                          //$rootScope.showAlert('Error in sending updates to service');
-                                                                                          });
+                                  $ionicLoading.hide();
+                                 if( $rootScope.timeInterval== false){
+                                    $rootScope.showAlert('Tracking started successfully');
+                                    $state.go('app.currentlocation', null, {  });
+                                 }else{
+                                   $state.go($state.current, {}, {reload: true});
+                                 }
+                                 }).error(function (data, status, headers, config) {
+                                      $ionicLoading.hide();
+                                      //$rootScope.showAlert('Error in sending updates to service');
+                                 });
                             */
                              }
                              } else {
@@ -803,13 +841,8 @@ $scope.openDatePicker=function(){
             }
 
             
-            $scope.startTracking = function(){
-            //  getUserLastLocation().then(function (result){
-                   //currentAddress = result;
-                   //alert("result: "+result);
-              //});
-            
-            try {
+        $scope.startTracking = function(){
+         try {
             $ionicLoading.show({template: 'Loading...'});
             if(navigator.geolocation){
             navigator.geolocation.getCurrentPosition(geolocationSuccess,geolocationError,{ enableHighAccuracy: true ,timeout: 5000 });
@@ -821,10 +854,10 @@ $scope.openDatePicker=function(){
 
             }
             
-            })
+    })
 .controller('profileCtrl', function( $config,$scope, $n, $ionicModal, $stateParams, $timeout, $state,$rootScope,$http,$ionicLoading, $ionicPopup,connectServerToGet ,connectServer) {
            
-            //$ionicLoading.show({template: 'Loading...'});
+            $ionicLoading.show({template: 'Loading...'});
             $scope.user = {"name": null, "email" :null, "mobile" : null};
             var userId = null, sessionId = null;
              userId= localStorage.getItem('userId');
@@ -834,7 +867,7 @@ $scope.openDatePicker=function(){
             connectServerToGet.getResponse(url,"GET",params).success(function (data) {
                var response = data.data;
                  //Get And display
-              
+                      $ionicLoading.hide();
                       $scope.user.name=response.fullName;
                       $scope.user.email=response.email;
                       $scope.user.mobile=response.mobile;
@@ -845,6 +878,7 @@ $scope.openDatePicker=function(){
                     });
             
             $scope.submit =function(){
+             $ionicLoading.show({template: 'Loading...'});
             var url= $config.serviceUrl + "/api/v2/user/update?sessionId="+sessionId+"&userId="+userId;
            var param = { "json": {"userId":userId, "full_name":$scope.user.name,"mobile":$scope.user.mobile,"status":"active","device_details":localStorage.deviceid}
             };
@@ -852,11 +886,12 @@ $scope.openDatePicker=function(){
                  var response = data.data;
                  //alert(JSON.stringify( data));
                  //Get And display
-                 
+                 $ionicLoading.hide();
+
                   $rootScope.showAlert('Profile updated successfully.');
                   $state.go('app.dashboard');
                  }).error(function (data, status, headers, config) {
-                          $rootScope.showAlert('status ='+ status + ' ' + headers);
+                          $rootScope.showAlert('Session expired. Please login again');
                           $ionicLoading.hide();
                 });
             }
@@ -872,16 +907,15 @@ $scope.openDatePicker=function(){
             var url= $config.serviceUrl + "/api/v2/user/itenaries/"+parseInt(userId)+"?sessionId="+sessionId+"&userId="+userId;
             var params ="";
            // alert("url: "+url+" userId: "+userId+" sessionId: "+sessionId);
-
+             $ionicLoading.show({template: 'Loading...'});
             connectServerToGet.getResponse(url,"GET",params).success(function (data) {
-                 var response = data.data;
-                 //Get And display
-                $scope.allTravelPlans= response;
-               // alert(JSON.stringify(response));
-                 
+                    var response = data.data;
+                    //Get And display
+                    $scope.allTravelPlans= response;
+                    $ionicLoading.hide();
                  }).error(function (data, status, headers, config) {
-                          $rootScope.showAlert('status ='+ status + ' ' + headers);
-                          //$ionicLoading.hide();
+                    $rootScope.showAlert('Session expired. Please login again');
+                    $ionicLoading.hide();
                 });
             
             $scope.showPlanDetails = function(travelId) {
