@@ -937,10 +937,14 @@ $scope.openDatePicker=function(){
             
 })
 
-.controller('currentLocationCtrl', function($scope,$state,  $http, $rootScope,$ionicLoading, $ionicPopup,$n, $q) {
+.controller('currentLocationCtrl', function($scope,$state,  $http, $rootScope,$ionicLoading, $ionicPopup,$n, $q,$ionicHistory) {
             $scope.mapView =false;
             $scope.isListView =function(){
               $scope.mapView =false;
+            };
+            
+            $scope.goBack =function(){
+              $ionicHistory.goBack();
             };
            // var mapElement= document.getElementById('map');
              var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
@@ -1003,7 +1007,7 @@ $scope.openDatePicker=function(){
                 });
                 marker.content = '<div class="infoWindowContent">' + info.desc + '</div>';
                 google.maps.event.addListener(marker, 'click', function(){
-                      infoWindow.setContent('<h2>' + marker.title + '</h2>' );
+                      infoWindow.setContent('<h2>' + marker.title + '</h2>' + info.desc);
                       infoWindow.open($scope.map, marker);
                 });
             
@@ -1015,7 +1019,6 @@ $scope.openDatePicker=function(){
                    createMarker(cities[i]);
                 }
                 $scope.openInfoWindow = function(e, selectedMarker){
-                    alert("openInfoWindow called");
                     e.preventDefault();
                     google.maps.event.trigger(selectedMarker, 'click');
                 }
