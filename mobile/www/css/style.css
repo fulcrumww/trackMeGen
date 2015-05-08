@@ -118,7 +118,6 @@ ion-list .item{
 #map {
     height:420px;
     /*width:600px;*/
-    border:2px solid red;
 }
 .infoWindowContent {
     font-size:  14px !important;
